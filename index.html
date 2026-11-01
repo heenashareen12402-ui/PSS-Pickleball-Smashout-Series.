@@ -1,1 +1,190 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickleball Championship</title>
+<style>
+:root {
+  --site-primary: #B7F34A;
+  --site-secondary: #18231F;
+  --site-background: #0D1411;
+  --site-on-primary: #142014;
+  --site-on-secondary: #F5F7F4;
+  --site-on-background: #F5F7F4;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--site-background); color: var(--site-on-background); font-family: var(--site-font-body); }
+#app { min-height: 100vh; width: 100%; background-color: var(--site-background); color: var(--site-on-background); overflow: hidden; border-radius: 0; }
+.hero { position: relative; overflow: hidden; padding: calc(38px * var(--site-spacing-scale)) max(22px, calc((100vw - 1120px)/2)); background: var(--site-secondary); border-bottom: 1px solid #34423A; }
+.hero:after { content:""; position:absolute; width:330px; height:330px; border:48px solid var(--site-primary); border-radius:50%; right:-95px; top:-185px; opacity:calc(.10 * var(--site-decoration-opacity)); pointer-events:none; }
+.topline { display:flex; justify-content:space-between; align-items:center; gap:12px; position:relative; z-index:1; }
+.brand { font-weight:900; letter-spacing:.16em; font-size:12px; color:var(--site-primary); }
+.status { font-size:11px; font-weight:800; letter-spacing:.12em; color:var(--site-primary); border:1px solid #53633D; border-radius:99px; padding:8px 11px; }
+.hero h1 { position:relative; z-index:1; margin:38px 0 8px; max-width:760px; font-family:var(--site-font-heading); font-size:calc(clamp(42px, 8vw, 82px) * var(--site-heading-scale)); line-height:.92; letter-spacing:-.07em; text-transform:uppercase; }
+.hero h1 span { color:var(--site-primary); }
+.subtitle { position:relative; z-index:1; color:#B8C2BB; font-size:14px; margin:16px 0 0; }
+.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:600px; margin-top:28px; position:relative; z-index:1; }
+.stat { background:#24312A; border:1px solid #39473F; border-radius:calc(14px * var(--site-radius-scale)); padding:14px; }
+.stat strong { display:block; font-size:25px; color:var(--site-primary); letter-spacing:-.05em; }
+.stat small { color:#B8C2BB; font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+main { max-width:1120px; margin:auto; padding:28px 22px 60px; }
+.nav { display:flex; gap:8px; overflow-x:auto; padding-bottom:14px; margin-bottom:18px; }
+.nav button, .btn { border:1px solid #39473F; background:#18231F; color:#E8EEE9; border-radius:99px; padding:10px 15px; font:700 12px var(--site-font-body); cursor:pointer; white-space:nowrap; }
+.nav button.active, .btn.primary { background:var(--site-primary); color:var(--site-on-primary); border-color:var(--site-primary); }
+.section { display:none; }
+.section.active { display:block; }
+.section-head { display:flex; justify-content:space-between; align-items:end; gap:12px; margin:20px 0 15px; }
+h2 { margin:0; font-size:calc(25px * var(--site-heading-scale)); letter-spacing:-.045em; }
+.eyebrow { color:var(--site-primary); font-size:10px; font-weight:900; letter-spacing:.15em; text-transform:uppercase; margin-bottom:7px; }
+.muted { color:#A5B0A8; font-size:12px; line-height:1.55; }
+.pool-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.panel { background:#18231F; border:1px solid #34423A; border-radius:calc(18px * var(--site-radius-scale)); padding:18px; }
+.pool-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.pool-title h3 { margin:0; font-size:17px; }
+.pool-tag { color:var(--site-primary); font-size:10px; font-weight:900; letter-spacing:.12em; }
+.team { display:flex; align-items:center; gap:11px; padding:11px 0; border-top:1px solid #303D35; }
+.team-num { width:28px; height:28px; display:grid; place-items:center; border-radius:8px; background:#2A3930; color:var(--site-primary); font-size:11px; font-weight:900; }
+.team-name { font-size:13px; font-weight:750; }
+.match-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.match { background:#18231F; border:1px solid #34423A; border-radius:14px; padding:14px; }
+.match-top { display:flex; justify-content:space-between; gap:8px; color:#9EAAA1; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px; }
+.match-row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:7px 0; font-size:12px; font-weight:700; }
+.score { min-width:25px; text-align:center; color:var(--site-primary); font-size:15px; font-weight:900; }
+.match-bottom { display:flex; justify-content:space-between; align-items:center; border-top:1px solid #303D35; margin-top:8px; padding-top:10px; color:#9EAAA1; font-size:10px; }
+.result { color:var(--site-primary); font-weight:900; }
+.table-wrap { overflow-x:auto; border:1px solid #34423A; border-radius:14px; }
+table { border-collapse:collapse; width:100%; min-width:520px; background:#18231F; font-size:12px; }
+th { color:#A8B4AB; text-transform:uppercase; font-size:10px; letter-spacing:.08em; text-align:center; }
+th:first-child, td:first-child { text-align:left; }
+th,td { padding:13px 12px; border-bottom:1px solid #303D35; text-align:center; }
+td:first-child { font-weight:750; }
+tr:last-child td { border-bottom:0; }
+.rank { color:var(--site-primary); font-weight:900; margin-right:8px; }
+.qualify { color:var(--site-primary); font-size:9px; font-weight:900; margin-left:6px; }
+.bracket { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.bracket-card { background:#18231F; border:1px solid #34423A; border-radius:16px; padding:17px; }
+.bracket-card h3 { margin:0 0 15px; color:var(--site-primary); font-size:11px; letter-spacing:.12em; }
+.bracket-team { padding:12px; border-radius:9px; background:#24312A; margin:7px 0; font-size:12px; font-weight:750; display:flex; justify-content:space-between; gap:8px; }
+.final-card { margin-top:16px; padding:24px; border:1px solid #627A3E; background:linear-gradient(135deg,#26352B,#18231F); border-radius:18px; text-align:center; }
+.final-card .trophy { font-size:32px; }
+.final-card h3 { color:var(--site-primary); letter-spacing:.14em; font-size:13px; }
+.admin-bar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; background:#24312A; border:1px solid #465547; border-radius:14px; padding:14px; margin-bottom:16px; }
+.admin-bar strong { font-size:13px; }
+.admin-bar p { margin:4px 0 0; color:#AAB5AC; font-size:11px; }
+input { background:#0F1712; border:1px solid #465547; color:#F5F7F4; padding:9px 10px; border-radius:8px; width:68px; font:700 13px var(--site-font-body); }
+input.pin { width:115px; }
+.admin-tools { display:none; }
+.admin-tools.visible { display:block; }
+.admin-note { background:#2C2517; border:1px solid #66552E; color:#EBD9A5; padding:12px 14px; border-radius:12px; font-size:11px; line-height:1.5; margin-bottom:15px; }
+.score-edit { display:flex; align-items:center; gap:6px; }
+.score-edit span { color:#AAB5AC; font-size:11px; }
+.save { background:var(--site-primary); border:0; color:#142014; font-weight:900; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:11px; }
+.empty { color:#AAB5AC; font-size:12px; }
+footer { border-top:1px solid #34423A; padding:22px; text-align:center; color:#849188; font-size:10px; letter-spacing:.08em; }
+@media(max-width:680px) { .hero { padding:27px 20px; } .hero h1 { margin-top:32px; } main { padding:20px 15px 42px; } .pool-grid,.match-list,.bracket { grid-template-columns:1fr; } .stats { gap:7px; } .stat { padding:11px; } .stat strong { font-size:21px; } .section-head { align-items:start; flex-direction:column; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="hero">
+    <div class="topline"><div class="brand">COURTSIDE • TOURNAMENT SERIES</div><div class="status">● TOURNAMENT HUB</div></div>
+    <h1>PLAY HARD.<br><span>STAY IN THE GAME.</span></h1>
+    <p class="subtitle">The official fixture, results and standings hub for our pickleball doubles tournament.</p>
+    <div class="stats"><div class="stat"><strong>08</strong><small>Doubles teams</small></div><div class="stat"><strong>02</strong><small>Competition pools</small></div><div class="stat"><strong>15</strong><small>Total matches</small></div></div>
+  </header>
+  <main>
+    <nav class="nav" aria-label="Tournament sections">
+      <button class="active" data-tab="overview">Overview</button><button data-tab="fixtures">Fixtures & Results</button><button data-tab="standings">Standings</button><button data-tab="knockout">Semi-finals & Final</button><button data-tab="organizer">Organizer</button>
+    </nav>
+    <section id="overview" class="section active">
+      <div class="section-head"><div><div class="eyebrow">The draw</div><h2>Meet the teams</h2></div><div class="muted">Top 2 from each pool advance</div></div>
+      <div class="pool-grid" id="teamPools"></div>
+      <div class="section-head"><div><div class="eyebrow">How it works</div><h2>Road to the title</h2></div></div>
+      <div class="panel"><p class="muted">Each team plays the other three teams in its pool once. A win earns 2 points; a loss earns 0. The top two teams from each pool qualify for the semi-finals. Semi-final winners meet in the grand final.</p></div>
+    </section>
+    <section id="fixtures" class="section">
+      <div class="section-head"><div><div class="eyebrow">12 pool matches</div><h2>Fixtures & results</h2></div><div class="muted">Scores appear here when entered by the organizer</div></div>
+      <div id="fixtureList"></div>
+    </section>
+    <section id="standings" class="section">
+      <div class="section-head"><div><div class="eyebrow">Live table</div><h2>Pool standings</h2></div><div class="muted">Win = 2 pts · Loss = 0 pts</div></div>
+      <div class="pool-grid"><div><div class="eyebrow">Pool A</div><div class="table-wrap" id="tableA"></div></div><div><div class="eyebrow">Pool B</div><div class="table-wrap" id="tableB"></div></div></div>
+      <p class="muted">Tie-break order: total points, point difference, then points scored.</p>
+    </section>
+    <section id="knockout" class="section">
+      <div class="section-head"><div><div class="eyebrow">Top two qualify</div><h2>Championship bracket</h2></div></div>
+      <div class="bracket" id="semis"></div>
+      <div class="final-card" id="final"><div class="trophy">🏆</div><h3>GRAND FINAL</h3><p class="muted">Winner of Semi-final 1 vs Winner of Semi-final 2</p><div class="bracket-team" style="justify-content:center">Awaiting semi-final winners</div></div>
+    </section>
+    <section id="organizer" class="section">
+      <div class="section-head"><div><div class="eyebrow">Match control</div><h2>Organizer desk</h2></div></div>
+      <div class="admin-bar"><div><strong id="adminState">Organizer login</strong><p>Sign in with your Supabase organizer email and password.</p></div><div class="score-edit"><input class="pin" id="adminEmail" type="email" autocomplete="username" placeholder="Organizer email" style="width:190px"><input class="pin" id="adminPassword" type="password" autocomplete="current-password" placeholder="Password"><button class="btn primary" id="unlock">Sign in</button></div></div>
+      <div class="admin-note">Scores entered here are saved to the shared tournament database. Everyone can view results; only your signed-in organizer account can change them.</div>
+      <div class="admin-tools" id="adminTools"><div class="eyebrow">Enter pool scores</div><div id="scoreEditor"></div><button class="btn" id="lock" style="margin-top:14px">Lock organizer mode</button></div>
+    </section>
+  </main>
+  <footer>PLAY WITH PURPOSE • COMPETE WITH RESPECT • PICKLEBALL TOURNAMENT</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://lerzgjueydivljpgfawt.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_ofNm4nm5KGZ5rRdcTJ4ZyA_ZflRIJVZ';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const teams = [
+ {id:'A1',pool:'A',name:'Arjun / Aswin'}, {id:'A2',pool:'A',name:'Tony / Naresh'},
+ {id:'A3',pool:'A',name:'Jithin / Santhosh'}, {id:'A4',pool:'A',name:'Krishna / Ruben'},
+ {id:'B1',pool:'B',name:'Srini / Saravanan'}, {id:'B2',pool:'B',name:'Rajeev / Saranya'},
+ {id:'B3',pool:'B',name:'Chandramouli / Praveen'}, {id:'B4',pool:'B',name:'Karthik / Kumaran'}
+];
+const matches = [
+ {id:1,pool:'A',round:1,a:'A1',b:'A2'}, {id:2,pool:'A',round:1,a:'A3',b:'A4'},
+ {id:3,pool:'A',round:2,a:'A1',b:'A3'}, {id:4,pool:'A',round:2,a:'A2',b:'A4'},
+ {id:5,pool:'A',round:3,a:'A1',b:'A4'}, {id:6,pool:'A',round:3,a:'A2',b:'A3'},
+ {id:7,pool:'B',round:1,a:'B1',b:'B2'}, {id:8,pool:'B',round:1,a:'B3',b:'B4'},
+ {id:9,pool:'B',round:2,a:'B1',b:'B3'}, {id:10,pool:'B',round:2,a:'B2',b:'B4'},
+ {id:11,pool:'B',round:3,a:'B1',b:'B4'}, {id:12,pool:'B',round:3,a:'B2',b:'B3'}
+];
+const scores = {};
+let unlocked = false;
+const team = id => teams.find(t=>t.id===id);
+function renderTeams(){
+ document.getElementById('teamPools').innerHTML=['A','B'].map(p=>`<div class="panel"><div class="pool-title"><h3>POOL ${p}</h3><span class="pool-tag">4 TEAMS</span></div>${teams.filter(t=>t.pool===p).map((t,i)=>`<div class="team"><span class="team-num">${i+1}</span><span class="team-name">${t.name}</span></div>`).join('')}</div>`).join('');
+}
+function standings(pool){
+ const rows=teams.filter(t=>t.pool===pool).map(t=>({team:t,played:0,won:0,lost:0,pts:0,for:0,against:0}));
+ matches.filter(m=>m.pool===pool).forEach(m=>{const s=scores[m.id]; if(!s||s.a===null||s.b===null||s.a===s.b)return; const a=rows.find(r=>r.team.id===m.a),b=rows.find(r=>r.team.id===m.b); a.played++;b.played++;a.for+=s.a;a.against+=s.b;b.for+=s.b;b.against+=s.a;if(s.a>s.b){a.won++;a.pts+=2;b.lost++;}else{b.won++;b.pts+=2;a.lost++;}});
+ return rows.sort((a,b)=>b.pts-a.pts||((b.for-b.against)-(a.for-a.against))||b.for-a.for);
+}
+function scoreText(m){const s=scores[m.id];return s?`${s.a} – ${s.b}`:'—';}
+function renderFixtures(){
+ document.getElementById('fixtureList').innerHTML=['A','B'].map(p=>`<div class="section-head"><div><div class="eyebrow">Pool ${p}</div><h2>Pool ${p} fixtures</h2></div></div>${[1,2,3].map(r=>`<div class="eyebrow" style="margin:18px 0 9px">ROUND ${r}</div><div class="match-list">${matches.filter(m=>m.pool===p&&m.round===r).map(m=>`<div class="match"><div class="match-top"><span>Match ${String(m.id).padStart(2,'0')}</span><span>Pool ${p} · Round ${r}</span></div><div class="match-row"><span>${team(m.a).name}</span><span class="score">${scores[m.id]?.a ?? '–'}</span></div><div class="match-row"><span>${team(m.b).name}</span><span class="score">${scores[m.id]?.b ?? '–'}</span></div><div class="match-bottom"><span>${scores[m.id]?'COMPLETED':'NOT PLAYED'}</span><span class="result">${scores[m.id]?(scores[m.id].a>scores[m.id].b?team(m.a).name:scores[m.id].b>scores[m.id].a?team(m.b).name:'TIED')+' WON':''}</span></div></div>`).join('')}</div>`).join('')}`).join('');
+}
+function tableHTML(pool){const rows=standings(pool);return `<table><thead><tr><th>Team</th><th>P</th><th>W</th><th>L</th><th>Pts</th><th>Diff</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td><span class="rank">${i+1}</span>${r.team.name}${i<2?'<span class="qualify">Q</span>':''}</td><td>${r.played}</td><td>${r.won}</td><td>${r.lost}</td><td><strong>${r.pts}</strong></td><td>${r.for-r.against>0?'+':''}${r.for-r.against}</td></tr>`).join('')}</tbody></table>`;}
+function renderStandings(){document.getElementById('tableA').innerHTML=tableHTML('A');document.getElementById('tableB').innerHTML=tableHTML('B');}
+function renderKnockout(){
+ const a=standings('A'),b=standings('B');
+ const semi1a=a[0].played===3?a[0].team.name:'Pool A 1st'; const semi1b=b[1].played===3?b[1].team.name:'Pool B 2nd';
+ const semi2a=b[0].played===3?b[0].team.name:'Pool B 1st'; const semi2b=a[1].played===3?a[1].team.name:'Pool A 2nd';
+ document.getElementById('semis').innerHTML=`<div class="bracket-card"><h3>SEMI-FINAL 01</h3><div class="bracket-team">${semi1a}</div><div class="bracket-team">${semi1b}</div><p class="muted">Pool A 1st vs Pool B 2nd</p></div><div class="bracket-card"><h3>SEMI-FINAL 02</h3><div class="bracket-team">${semi2a}</div><div class="bracket-team">${semi2b}</div><p class="muted">Pool B 1st vs Pool A 2nd</p></div>`;
+}
+function renderEditor(){document.getElementById('scoreEditor').innerHTML=matches.map(m=>`<div class="match" style="margin:10px 0"><div class="match-top"><span>Match ${String(m.id).padStart(2,'0')}</span><span>Pool ${m.pool} · Round ${m.round}</span></div><div class="score-edit" style="justify-content:space-between;flex-wrap:wrap"><span style="flex:1;min-width:130px">${team(m.a).name}</span><input aria-label="${team(m.a).name} score" type="number" min="0" id="s${m.id}a" value="${scores[m.id]?.a??''}" placeholder="0"><span>vs</span><input aria-label="${team(m.b).name} score" type="number" min="0" id="s${m.id}b" value="${scores[m.id]?.b??''}" placeholder="0"><span style="flex:1;min-width:130px;text-align:right">${team(m.b).name}</span><button class="save" onclick="saveScore(${m.id})">SAVE</button><button class="btn" onclick="clearScore(${m.id})">Clear</button></div></div>`).join('');}
+function refresh(){renderFixtures();renderStandings();renderKnockout();if(unlocked)renderEditor();}
+async function loadScores(){const {data,error}=await db.from('match_scores').select('match_id,score_a,score_b');if(error){console.error(error);alert('Could not load scores: '+error.message);return;}Object.keys(scores).forEach(k=>delete scores[k]);(data||[]).forEach(row=>{scores[row.match_id]={a:row.score_a,b:row.score_b};});refresh();}
+async function saveScore(id){if(!unlocked)return;const a=document.getElementById(`s${id}a`).value,b=document.getElementById(`s${id}b`).value;if(a===''||b===''||Number(a)<0||Number(b)<0||Number(a)===Number(b)){alert('Enter two valid scores. Scores cannot be tied for this knockout-qualification format.');return;}const {data:{user}}=await db.auth.getUser();const {error}=await db.from('match_scores').upsert({match_id:id,score_a:Number(a),score_b:Number(b),updated_at:new Date().toISOString(),updated_by:user.id},{onConflict:'match_id'});if(error){alert('Could not save score: '+error.message);return;}scores[id]={a:Number(a),b:Number(b)};refresh();}
+async function clearScore(id){if(!unlocked)return;const {error}=await db.from('match_scores').delete().eq('match_id',id);if(error){alert('Could not clear score: '+error.message);return;}delete scores[id];refresh();}
+window.saveScore=saveScore;window.clearScore=clearScore;
+document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===btn.dataset.tab));}));
+document.getElementById('unlock').addEventListener('click',async()=>{const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('adminPassword').value;if(!email||!password){alert('Enter your organizer email and password.');return;}const {data,error}=await db.auth.signInWithPassword({email,password});if(error){alert('Sign-in failed: '+error.message);return;}unlocked=true;document.getElementById('adminState').textContent='Organizer mode unlocked';document.getElementById('adminTools').classList.add('visible');document.getElementById('unlock').textContent='Signed in';await loadScores();renderEditor();});
+document.getElementById('lock').addEventListener('click',async()=>{await db.auth.signOut();unlocked=false;document.getElementById('adminState').textContent='Organizer mode is locked';document.getElementById('adminTools').classList.remove('visible');document.getElementById('adminPassword').value='';document.getElementById('unlock').textContent='Sign in';});
+renderTeams();refresh();loadScores();
+</script>
+</body>
+</html>
